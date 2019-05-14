@@ -1,0 +1,29 @@
+@using University.Models
+
+<h1>@Model.GetName()!</h1>
+<h2>Current Courses:</h2>
+<ul>
+  @foreach(int course in @Model.GetStudentsForCourse())
+  {
+    <li>@Course.Find(course).GetCourseName()</li>
+  }
+</ul>
+
+<form class="" action="/Students/@Model.GetId()/" method="post">
+  <button type="submit">Enroll in a course</button>
+  <select name="courses">
+    @foreach(var course in Course.GetAll())
+    {
+      if(@Model.GetStudentsForCourse().Contains(course.GetId()) == false)
+      {
+        <option value="@course.GetId()">@course.GetCourseName()</option>
+      }
+    }
+  </select>
+  <br>
+
+</form>
+
+<a href="/">Return to homepage</a>
+<a href="/courses">Return to courses</a>
+<a href="/students">Return to students</a>

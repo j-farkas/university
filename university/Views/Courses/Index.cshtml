@@ -1,0 +1,14 @@
+<h1>List of Courses</h1>
+
+<ul>
+  @foreach(var course in Model)
+  {
+    <a href="courses/@course.GetId()">@course.GetCourseName() - @course.GetCourseNumber()</a><br>
+  }
+</ul>
+
+<a href=/courses/new>ADD A COURSE</a>
+@if(Model.Count > 0)
+{
+  <a href=/students/new>ADD A STUDENT</a>
+}

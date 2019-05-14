@@ -111,38 +111,33 @@ namespace University.Models
       }
     }
 
-    // public static List<Student> GetStudents(int num)
-    // {
-    //
-    //   List<Student> allStudents = new List<Student> {};
-    //   MySqlConnection conn = DB.Connection();
-    //   conn.Open();
-    //   MySqlCommand cmd = conn.CreateCommand() as MySqlCommand;
-    //   cmd.CommandText = @"SELECT * FROM `clients` WHERE `stylist` = "+num+" order by `hair` desc;";
-    //   MySqlDataReader rdr = cmd.ExecuteReader() as MySqlDataReader;
-    //   while(rdr.Read())
-    //   {
-    //     Student newStudent = new Student();
-    //     newStudent.SetName(rdr.GetString(1));
-    //     newStudent.SetId(rdr.GetInt32(0));
-    //     newStudent.SetStylist(rdr.GetInt32(2));
-    //     newStudent.SetHair(rdr.GetInt32(3));
-    //     allItems.Add(newStudent);
-    //   }
-    //   conn.Close();
-    //   if (conn != null)
-    //   {
-    //     conn.Dispose();
-    //   }
-    //   return allItems;
-    // }
+
+    public List<int> GetStudentsForCourse()
+    {
+      List<int> allStudents = new List<int> {};
+      MySqlConnection conn = DB.Connection();
+      conn.Open();
+      MySqlCommand cmd = conn.CreateCommand() as MySqlCommand;
+      cmd.CommandText = @"SELECT * FROM `registration` WHERE `student_id` = "+_id+";";
+      MySqlDataReader rdr = cmd.ExecuteReader() as MySqlDataReader;
+      while(rdr.Read())
+      {
+        allStudents.Add(rdr.GetInt32(2));
+      }
+      conn.Close();
+      if (conn != null)
+      {
+        conn.Dispose();
+      }
+      return allStudents;
+    }
 
     public void Save()
     {
       MySqlConnection conn = DB.Connection();
       conn.Open();
       MySqlCommand cmd = conn.CreateCommand() as MySqlCommand;
-      cmd.CommandText = @"INSERT INTO `student` (`name`, `_date_of_enrollment`) VALUES ('"+_name+"',"_date_of_enrollment");";
+      cmd.CommandText = @"INSERT INTO `student` (`name`) VALUES ('"+_name+"');";
       cmd.ExecuteNonQuery();
       conn.Close();
       if (conn != null)

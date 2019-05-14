@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace university
+namespace University
 {
     public class Startup
     {
@@ -49,18 +49,15 @@ namespace university
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
             app.UseMvc();
         }
-
-        public static class DBConfiguration
-        {
-          public static string ConnectionString = "server=localhost;user id=root;password=root;port=8889;database=university;";
-        }
-
-
+    }
+    public static class DBConfiguration
+    {
+      public static string ConnectionString = "server=localhost;user id=root;password=root;port=8889;database=university;";
     }
 }

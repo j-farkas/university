@@ -15,9 +15,10 @@ namespace University.Models
 
     }
 
-    public Course(string name)
+    public Course(string name, int courseNumber)
     {
       _name = name;
+      _courseNumber = courseNumber;
     }
 
     public int GetId()
@@ -40,15 +41,37 @@ namespace University.Models
       _name = name;
     }
 
-    public string GetCourseNumber()
+    public int GetCourseNumber()
     {
-      return _name;
+      return _courseNumber;
     }
 
-    public void SetCourseNumber(int _courseNumber)
+    public void SetCourseNumber(int courseNumber)
     {
       _courseNumber = courseNumber;
     }
+
+    public List<int> GetStudentsInCourse()
+    {
+      List<int> allStudents = new List<int> {};
+      MySqlConnection conn = DB.Connection();
+      conn.Open();
+      MySqlCommand cmd = conn.CreateCommand() as MySqlCommand;
+      cmd.CommandText = @"SELECT * FROM `registration` WHERE `student_id` = "+_id+";";
+      MySqlDataReader rdr = cmd.ExecuteReader() as MySqlDataReader;
+      while(rdr.Read())
+      {
+        allStudents.Add(rdr.GetInt32(0));
+      }
+      conn.Close();
+      if (conn != null)
+      {
+        conn.Dispose();
+      }
+      return allStudents;
+    }
+
+
 
     public static Course Find(int check)
     {
@@ -58,12 +81,14 @@ namespace University.Models
       MySqlCommand cmd = conn.CreateCommand() as MySqlCommand;
       cmd.CommandText = @"SELECT * FROM course where id = "+check+";";
       MySqlDataReader rdr = cmd.ExecuteReader() as MySqlDataReader;
-      rdr.Read();
-      if(rdr.IsDBNull(0) == false)
+      while(rdr.Read())
       {
-        ret.SetId(rdr.GetInt32(0));
-        ret.SetCourseName(rdr.GetString(1));
-        ret.SetCourseNumber(rdr.GetInt32(2));
+        if(rdr.IsDBNull(0) == false)
+        {
+          ret.SetId(rdr.GetInt32(0));
+          ret.SetCourseName(rdr.GetString(1));
+          ret.SetCourseNumber(rdr.GetInt32(2));
+        }
       }
       conn.Close();
       if (conn != null)
@@ -72,6 +97,9 @@ namespace University.Models
       }
       return ret;
     }
+
+
+
 
     public static List<Course> GetAll()
     {
@@ -111,38 +139,27 @@ namespace University.Models
       }
     }
 
-    // public static List<Course> GetCourses(int num)
-    // {
-    //
-    //   List<Course> allCourses = new List<Course> {};
-    //   MySqlConnection conn = DB.Connection();
-    //   conn.Open();
-    //   MySqlCommand cmd = conn.CreateCommand() as MySqlCommand;
-    //   cmd.CommandText = @"SELECT * FROM `clients` WHERE `stylist` = "+num+" order by `hair` desc;";
-    //   MySqlDataReader rdr = cmd.ExecuteReader() as MySqlDataReader;
-    //   while(rdr.Read())
-    //   {
-    //     Course newCourse = new Course();
-    //     newCourse.SetName(rdr.GetString(1));
-    //     newCourse.SetId(rdr.GetInt32(0));
-    //     newCourse.SetStylist(rdr.GetInt32(2));
-    //     newCourse.SetHair(rdr.GetInt32(3));
-    //     allItems.Add(newCourse);
-    //   }
-    //   conn.Close();
-    //   if (conn != null)
-    //   {
-    //     conn.Dispose();
-    //   }
-    //   return allItems;
-    // }
+    public void AddStudentToCourse(Student theStudent)
+    {
+
+      MySqlConnection conn = DB.Connection();
+      conn.Open();
+      MySqlCommand cmd = conn.CreateCommand() as MySqlCommand;
+      cmd.CommandText = @"INSERT INTO `registration` (`student_id`, `course_id`) VALUES ('"+theStudent.GetId()+"',"+_id+");";
+      cmd.ExecuteNonQuery();
+      conn.Close();
+      if (conn != null)
+      {
+        conn.Dispose();
+      }
+    }
 
     public void Save()
     {
       MySqlConnection conn = DB.Connection();
       conn.Open();
       MySqlCommand cmd = conn.CreateCommand() as MySqlCommand;
-      cmd.CommandText = @"INSERT INTO `course` (`course_name`, `course_number`) VALUES ('"+_name"',"_courseNumber");";
+      cmd.CommandText = @"INSERT INTO `course` (`course_name`, `course_number`) VALUES ('"+_name+"',"+_courseNumber+");";
       cmd.ExecuteNonQuery();
       conn.Close();
       if (conn != null)
